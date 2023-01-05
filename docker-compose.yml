@@ -120,6 +120,9 @@ services:
       - schema-registry
     ports:
       - "8083:8083"
+    volumes:
+      - ./confluentinc-kafka-connect-jdbc:/usr/share/confluent-hub-components/confluentinc-kafka-connect-jdbc
+      - ./confluentinc-kafka-connect-datagen:/usr/share/confluent-hub-components/confluentinc-kafka-connect-datagen
     environment:
       CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
@@ -233,3 +236,17 @@ services:
       KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+
+  mysql:
+    image: mysql:5.7
+    hostname: mysql
+    container_name: mysql
+    volumes:
+      - ./mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_HOST: 172.%  # Allow docker containers to connect to mysql
+
